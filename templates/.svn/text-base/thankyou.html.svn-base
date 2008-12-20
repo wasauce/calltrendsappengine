@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+		
+            {% if success %}
+        
+     <div class="post">
+			<h2 class="title">Order confirmation</h2>
+			<div class="entry">
+			Thank you for your order with Sustainable Bucket.  Below are the details of your order. If you would like to keep a record of your order, we recommend printing this page.
+			            
+            <a href="{{ product.image }}" rel="lightbox" title="{{ product.title }}">{{ product.title }}</a><br /> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;Quantity:{{ product.quantity }} <br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;Product Total:{{product.total }} <br /><br />
+            
+            <a href="{{ product.image }}" rel="lightbox" title="{{ product.title }}">{{ product.title }}</a><br /> 
+                    &nbsp;&nbsp;&nbsp;&nbsp;Quantity:{{ product.quantity }} <br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;Product Total:{{product.total }} <br /><br />
+            
+            
+            </div>
+	
+		</div>
+        
+        <div class="post">
+			<h2 class="title">Shipping Details</h2>
+			<div class="entry">
+			We estimate your order will ship within 24 hours and should arrive in 5 business days or sooner if you selected expedited shipping. Please let us know as soon as possible if you would like to <a href="EDITORDER">change or edit your order.</a>
+			</div>
+	    </div>
+		
+        <div class="post">
+			<h2 class="title">Environmental Impact </h2> 
+			<div class="entry">
+			Below you will find the estimated average impact of the purchases you made.  If you are curious about the data we recommend you check out the <a href="DATASOURCES">averages and assumptions</a> we use. You can also <a href="SHARE">share this data with your friends.</a><h3><br />
+                                
+                    Your purchases will result in the following impact compared to the average person:<br />
+                    + Carbon savings: {{ order.carbonsavings }}<br />
+                    + Waste savings: {{ order.wastesavings }}<br />
+                    + Energy savings: {{ order.energysavings }}<br />
+            
+            {% else %}
+            
+            Oops! It appears there was an error processing your order.  Do not press the back button.  If you reached this page trying to finish an order, please <a href="contact">contact us</a> and let us know the details of you and your order.  Thanks for your patience!
+
+        	{% endif %}
+
+			</div>
+	    </div>
+        
+</div>
+
+
+	<!-- end content -->
+{% endblock content %} 

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+			<h2 class="title">&nbsp;</h2>
+			<div class="entry">
+				<p><img src="static/images/product_banner.gif" alt="Green Product Banner" width="500" height="100" class="left" /></p><br /><br />
+                
+                <h2>Sustainable Bucket [noun]:</h2>a basket of recycled and environmentally sustainable goods that a normal person can use to curb greenhouse gases, increase personal awareness of environmental issues and generally do something small to start helping the earth. <a href="createbucket.html">Click here to start creating yours.</a>
+			</div>
+	
+			<h2 class="title">&nbsp;</h2>
+			<div class="entry">
+				Cause it's a start, and now is the perfect time.  It's pretty easy:
+                <ol> 
+                <li><a href="createbucket.html">Figure out what you want in your bucket and we'll send it to you</a></li>
+                <li><a href="pictures.html">Joyfully open up your custom packed sustainable bucket</a></li>
+                <li><a href="howto.html">Start using everyday products to save water, energy and give the earth a well deserved break</a></li>
+                </ol>
+               
+			</div>
+		       <br />
+    <br />
+    <br />
+    <br />
+   
+		</div>
+	</div>
+	<!-- end content -->
+{% endblock content %} 

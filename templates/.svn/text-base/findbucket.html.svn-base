@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+        <div class="post">
+			<h2 class="title">Oops, sounds like something went wrong...</h2>
+			<div class="entry">
+				<p>Somewhere in this magical computer land, it looks like you didn't finish creating and purchasing your bucket. If you'd like to keep creating your bucket, click <a href="create">here</a>. If you have questions, feel free to checkout the <a href="faqs.html">FAQs</a> or <a href="contact.html">contact us</a> if you can't find the answer to your question.</p>
+		</div>
+	
+	</div>
+</div>
+	<!-- end content -->
+{% endblock content %} 

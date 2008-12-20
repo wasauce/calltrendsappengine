@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if traceback %}
+<br>
+<br>
+Ahh crap! You landed on this page because there was some type of error out there in serverland.  Try pressing the back button once and you should be fine.  If you continue to have problems please <a href="contact">email us</a> and let us know the steps you took to get to this page and the traceback number at the bottom of this page. Thanks for you help!
+<br>
+<br>
+Traceback:
+<br>
+{{ traceback }}
+{% endif %}
+{% endblock content %} 

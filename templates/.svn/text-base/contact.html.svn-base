@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+			<h2 class="title">our info</h2>
+			<div class="entry">
+				<p>
+                <ul>
+                <li>For help with ordering, products or returns: <a href="mailto:help@sustainablebucket.com">help@sustainablebucket.com</a></li>
+                <li>For news and press inquiries: <a href="mailto:press@sustainablebucket.com">press@sustainablebucket.com</a></li>
+                <li>For partner inquiries and affiliate help: <a href="mailto:partner@sustainablebucket.com">partner@sustainablebucket.com</a></li>
+				</ul>
+
+                </p>
+			</div>
+   
+   		<h2 class="title">top FAQs</h2>
+			<div class="entry">
+				<p>                
+                <ul>
+                <li><a href="faqs.html/INSERTSECTION">Do I have to order a bucket with my other products?</a></li>
+                <li><a href="faqs.html/INSERTSECTION">Where do your environmental impact numbers come from?</a></li>
+                <li><a href="faqs.html/INSERTSECTION">Can I order other green products besides the ones listed?</a></li>
+                <li><a href="faqs.html/INSERTSECTION">Do you package 'Sustainable Buckets' as gifts?</a></li>
+                <li><a href="faqs.html/INSERTSECTION">Can you recommend other ways to go green?</a></li>
+                </ul>
+                
+                 
+                 <br/>
+                </p>
+			</div>
+		       <br />
+    <br />
+    <br />
+    <br />
+		</div>
+	</div>
+	<!-- end content -->
+{% endblock content %} 

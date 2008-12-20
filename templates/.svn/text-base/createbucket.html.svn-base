@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- start page -->
+<div id="page">
+	<!-- start content -->
+	<div id="content">
+		<div class="post">
+		
+     <div class="post">
+			<h2 class="title">add products to your bucket</h2>
+			<div class="entry">
+            
+            {% if alertmessage %}
+            {{  alertmessage  }}
+            Whoops, it looks like you didn't select any products for checkout.  To select a product click the checkbox next to a product.  If you have boxes checked and continue to have problems, please <a href="contact">let us know</a>.<br />
+            
+            {% endif %}
+            
+            {% if productlist %}
+
+            
+            To select a product click the checkbox next to the product. For a picture and detailed description click the product title. You can change the quantity on the following page.<br /><br />
+
+            <form action="/confirm.do" method="post">
+
+               {% for product in productlist %}             
+             <input type="checkbox" value="1" name="{{ product.key }}"><a href="{{ product.image }}" rel="lightbox" title="{{ product.title }}">{{ product.title }}</a><br />
+            <table width="550" border="0">
+  				<tr>
+    			<td><img src="{{ product.thumbnail }}" alt="Product Image"/></td>
+                <td>{{ product.description }}<br />
+                Price ${{ product.cost }}</td>
+  				</tr>
+			</table>
+                         
+             <img src="../static/images/img04-light.jpg"  height="4" width="550px"/><br />
+
+               {% endfor %}
+
+<a href="www.INSERTAFFILIATELINKHERE.com">More green products from our partners>></a>
+                    
+                   <br />
+                   <br />
+                   <br />
+                   <input type="submit" value="Checkout Now">
+	           </form>
+                              
+              {% else %}
+              
+              We're currently updating the items you can select for your bucket so you can't make a purchase at the moment.  Check back very soon for an updated list of fantastic green products!
+                   
+              {% endif %}
+ 					
+			</div>
+	      </div>
+		</div>                
+	</div>
+	<!-- end content -->
+{% endblock content %} 
