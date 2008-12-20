@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-
-{% block content %}
-
-Sustainable Bucket is Under Construction. <br>
-
-Come back soon
-{% endblock content %} 
