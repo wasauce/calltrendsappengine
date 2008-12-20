@@ -174,6 +174,16 @@ class AboutPageHandler(BaseRequestHandler):
       #'title': 'Getting Started',
     })
 
+class TestPageHandler(BaseRequestHandler):
+  """ Generates the test page.
+
+  """
+  def get(self):
+    logging.info('Visiting the test page')
+    self.generate('test.html', {
+      #'title': 'Getting Started',
+    })
+
 class FAQsPageHandler(BaseRequestHandler):
   """ Generates the FAQ page.
 
@@ -206,9 +216,11 @@ class DataInputHandler(BaseRequestHandler):
 
     entry = IndividualCallData()
     entry.name = cgi.escape(self.request.get('name'))
+    logging.info('name is %s' % entry.name)
+    entry.put()
     
     self.generate('submitdata.html', {
-      #'data': data,
+      'data': self.request.get('name'),
     })
 
 
@@ -218,7 +230,8 @@ _CALLTRENDS_URLS = [
    ('/', HomePageHandler), #index.html
    ('/about', AboutPageHandler), #about.html
    ('/faqs', FAQsPageHandler), #faqs.html
-   ('/datain', DataInputHandler), #datainput.html
+   ('/datain', DataInputHandler), #submitdata.html
+   ('/test', TestPageHandler), #submitdata.html
 ]
 
 def main():
