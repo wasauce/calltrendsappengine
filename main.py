@@ -14,7 +14,7 @@ Django template filter library in templatefilters.py for use in dilbertindex
 templates.
 """
 
-__author__ = 'wferrell@ (Bill Ferrell)'
+__author__ = '(Bill Ferrell)'
 
 import cgi
 import datetime
@@ -102,7 +102,7 @@ class BaseRequestHandler(webapp.RequestHandler):
       exception_traceback = ''.join(traceback.format_exception(*sys.exc_info()))
       logging.error(exception_traceback)
       exception_expiration = 600 # seconds 
-      mail_admin = "wferrell@gmail.com" # must be an admin -- be sure to remove before committing
+      mail_admin = "" # must be an admin -- be sure to remove before committing
       sitename = "calltrends"
       throttle_name = 'exception-'+exception_name
       throttle = memcache.get(throttle_name)
