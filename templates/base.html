@@ -15,8 +15,6 @@ Description: A two-column, fixed-width and lightweight template ideal for 1024x7
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>CallTrends</title>
-<meta name="keywords" content="" />
-<meta name="description" content="" />
 <style type="text/css">{% include "css/default.css" %}</style>
 
 </head>
@@ -34,12 +32,15 @@ Description: A two-column, fixed-width and lightweight template ideal for 1024x7
 			<li><a href="/about"><span class="numbertxt"></span>About</a></li>
 			<li><a href="/mystats"><span class="numbertxt"></span>My Stats</a></li>
 			<li><a href="/communitystats"><span class="numbertxt"></span>Community Stats</a></li>
+			{% if logouturl %}
+			<li><a href="{{logouturl }}"><span class="numbertxt"></span>Logout</a></li>
+	        {% endif %}
 		</ul>
 	</div>
 </div>
 
 <div id="logo">
-	<h1> <a href="/index">CallTrends</a></h1>
+	<h1><a href="/index">CallTrends</a><img src="{{logourl}}" alt="Call Trends Logo" width="500" height="100" class="left" /></h1>	
 </div>
 
 {% endblock %}

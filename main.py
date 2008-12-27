@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 CallTrends
-Version 0.0.1
+Version 0.0.2
 
 We use the webapp.py WSGI framework to handle CGI requests, using the
 wsgiref module to wrap the webapp.py WSGI application in a CGI-compatible
@@ -32,7 +32,9 @@ import traceback
 import random
 
 # http://pygooglechart.slowchop.com/
-from pygooglechart import *
+import pygooglechart
+
+from calltrendshelpers import *
 
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
@@ -59,24 +61,52 @@ template.register_template_library('templatefilters')
 _DEBUG = True
 
 class IndividualCallData(db.Model):
-  """
-  This is the AppEngine data model for the individual call data
-  All call data will be input into the databse so that they can be updated,
+  """This is the AppEngine data model for the individual call data.
+  All call data will be input into the database so that they can be updated,
   queried and controlled from a single location. This will allow for easy 
   growth
   """
 
+  email = db.EmailProperty()
   number = db.PhoneNumberProperty()  #db.db.PhoneNumberProperty(required=True)
-  name = db.StringProperty()
   numberlabel = db.StringProperty()
   numbertype = db.StringProperty()
   date = int
   duration = int
-  new = int
   incoming_type = int
-  missed_type = int
   outgoing_type = int
+  missed_type = int
+  answered_type = int
   number_type = db.StringProperty()
+
+class IndividualMetrics(db.Model):
+  """
+  This is the AppEngine data model for the individuals metrics. 
+  All call data will be input into the database so that they can be updated,
+  queried and controlled from a single location. This will allow for easy 
+  growth.
+  """
+  email = db.EmailProperty()
+  duration_10_seconds = int # indicates call was less than 10 seconds
+  duration_30_seconds = int # indicates call was >9.999999 seconds but less than 30
+  duration_1_min = int # call was greater than 30 but less than 1 min
+  duration_5_min = int # call was greater than 1 min but less than 5 mins
+  duration_10_min = int # call was greater than 5 mins but less than 10 mins
+  duration_30_min = int # call was greater than 10 mins but less than 30 mins
+  duration_1_hour = int # call was greater than 30 mins but less than 1 hr
+  duration_greater_than_1_hr = int # call was greater than 1 hr
+  total_incoming_type = int
+  total_outgoing_type = int
+  total_missed_type = int
+  total_answered_type = int
+  total_calls = int
+  total_duration = int
+#---Top 10 incoming  #Could be found by querying + offline processing
+#---Top 10 missed    #Could be found by querying + offline processing
+#---Top 10 outgoing
+#---Number of minutes per day, week, month, year   #found by querying...
+#---Number of calls per day, week, month, year    #found by querying...
+
 
 
 class CollectiveCallData(db.Model):
@@ -86,15 +116,27 @@ class CollectiveCallData(db.Model):
   queried and controlled from a single location. This will allow for easy 
   growth
   """
-  title = db.TextProperty()
-  description = db.TextProperty()
-  cost = db.FloatProperty()
-  image = db.StringProperty()
-  thumbnail = db.StringProperty()
-  wastesaved = db.StringProperty()
-  energysaved = db.StringProperty()
-  carbonsaved = db.StringProperty()
-  shippingcostvalue = db.FloatProperty()
+
+  version = int
+  duration_10_seconds = int # indicates call was less than 10 seconds
+  duration_30_seconds = int # indicates call was >9.999999 seconds but less than 30
+  duration_1_min = int # call was greater than 30 but less than 1 min
+  duration_5_min = int # call was greater than 1 min but less than 5 mins
+  duration_10_min = int # call was greater than 5 mins but less than 10 mins
+  duration_30_min = int # call was greater than 10 mins but less than 30 mins
+  duration_1_hour = int # call was greater than 30 mins but less than 1 hr
+  duration_greater_than_1_hr = int # call was greater than 1 hr
+  total_incoming_type = int
+  total_outgoing_type = int
+  total_missed_type = int
+  total_answered_type = int
+  total_calls = int
+  total_duration = int
+  total_new = int # TODO: What is this?
+  total_incoming_time = int
+  total_outgoing_time = int
+#---Number of minutes per day, week, month, year   / incoming vs outgoing # some of this will need to be calculated nightly
+#---Number of calls per day, week, month, year / incoming vs outgoing # some of this will need to be calculated nightly. 
 
 
 class BaseRequestHandler(webapp.RequestHandler):
@@ -127,6 +169,9 @@ class BaseRequestHandler(webapp.RequestHandler):
       path = os.path.join(directory, os.path.join('templates', template_name))
       self.response.out.write(template.render(path, values, debug=_DEBUG))
 
+  def random_data(self):
+    return [random.randint(1, 100) for a in xrange(50)]
+
   def generate(self, template_name, template_values={}):
     """Generates the given template values into the given template.
 
@@ -134,11 +179,16 @@ class BaseRequestHandler(webapp.RequestHandler):
         template_name: the name of the template file (e.g., 'index.html')
         template_values: a dictionary of values to expand into the template
     """
+    # Create a chart object of 500x100 pixels
+    logo_chart = pygooglechart.SparkLineChart(500, 100)
+    logo_chart.add_data(self.random_data())
+    logo_chart.add_fill_simple('224499')
 
     # Populate the values common to all templates
     values = {
       #'user': users.GetCurrentUser(),
       'debug': self.request.get('deb'),
+      'logourl': logo_chart.get_url(),
     }
     values.update(template_values)
     directory = os.path.dirname(os.environ['PATH_TRANSLATED'])
@@ -160,18 +210,12 @@ class UnderConstructionHandler(BaseRequestHandler):
 class HomePageHandler(BaseRequestHandler):
   """  Generates the start/home page.
   """
-  def random_data(self):
-    return [random.randint(1, 100) for a in xrange(50)]
 
   def get(self, garbageinput=None):
     logging.info('Visiting the homepage')
-    # Create a chart object of 500x100 pixels
-    chart = SparkLineChart(500, 100)
-    chart.add_data(self.random_data())
-    chart.add_fill_simple('224499')
 
     self.generate('index.html', {
-      'logourl': chart.get_url(),
+      #'logourl': chart.get_url(),
     })
 
 class AboutPageHandler(BaseRequestHandler):
@@ -187,7 +231,7 @@ class AboutPageHandler(BaseRequestHandler):
 
 class FAQsPageHandler(BaseRequestHandler):
   """ Generates the FAQ page.
-
+      CURRENTLY UNUSED
   """
   def get(self):
     logging.info('Visiting the FAQs page')
@@ -209,20 +253,22 @@ class DataInputHandler(BaseRequestHandler):
     logging.info('Attempting to access DataInputHandler via GET')
     self.redirect("/index")
 
+
   def post(self):
     """ Post method to accept CallTrends data.
     
     """
     logging.info('Accessing DataInputHandler via POST')
-
-    entry = IndividualCallData()
-    entry.name = cgi.escape(self.request.get('name'))
-    logging.info('name is %s' % entry.name)
-    entry.put()
-    
-    self.generate('submitdata.html', {
-      'data': self.request.get('name'),
-    })
+    try:
+      #calltrendshelpers.processFormData(self.request):
+      self.response.out.write("SUCCESS")
+    except:
+      self.error(500)
+      mail_admin = 'wferrell@gmail.com' # Pull this code out when posting.
+      subject = 'CallTrends - DataInputHander Error'
+      mail.send_mail_to_admins(sender=mail_admin,
+                                 subject=subject,
+                                 body=self.request)
 
 class TestPageHandler(BaseRequestHandler):
   """ Generates the test page.
@@ -242,12 +288,14 @@ class MyStatsPageHandler(BaseRequestHandler):
 
     user = users.get_current_user()
     if user:
-      print "BILL READ THIS NOW"
+      #print "BILL READ THIS NOW" #QUERY HERE TO GET THE DATA TO OUTPUT AND GRAPH GRAPH GRAPH
+      pass
     else:
       	self.redirect(users.create_login_url(self.request.uri))
 
     self.generate('mystats.html', {
-      #'title': 'Getting Started',
+      'logouturl': users.create_logout_url('/index'),
+      #'':,
     })
 
 class CommunityStatsPageHandler(BaseRequestHandler):
@@ -257,7 +305,7 @@ class CommunityStatsPageHandler(BaseRequestHandler):
   def get(self):
     logging.info('Visiting the Community Stats page.')
     self.generate('communitystats.html', {
-      #'title': 'Getting Started',
+      #'': ,
     })
 
 class GettingStartedPageHandler(BaseRequestHandler):
@@ -282,6 +330,7 @@ _CALLTRENDS_URLS = [
    ('/mystats', MyStatsPageHandler), #mystats.html
    ('/communitystats', CommunityStatsPageHandler), #communitystats.html
    ('/gettingstarted', GettingStartedPageHandler), #gettingstarted.html
+   ('/init', InitPageHandler),
    ('/.*$', HomePageHandler), #index.html
 ]
 
