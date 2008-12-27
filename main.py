@@ -29,6 +29,10 @@ import urllib
 import logging
 import wsgiref.handlers
 import traceback
+import random
+
+# http://pygooglechart.slowchop.com/
+from pygooglechart import *
 
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
@@ -102,7 +106,7 @@ class BaseRequestHandler(webapp.RequestHandler):
       exception_traceback = ''.join(traceback.format_exception(*sys.exc_info()))
       logging.error(exception_traceback)
       exception_expiration = 600 # seconds 
-      mail_admin = "" # must be an admin -- be sure to remove before committing
+      mail_admin = "wferrell@gmail.com" # must be an admin -- be sure to remove before committing
       sitename = "calltrends"
       throttle_name = 'exception-'+exception_name
       throttle = memcache.get(throttle_name)
@@ -155,13 +159,19 @@ class UnderConstructionHandler(BaseRequestHandler):
 
 class HomePageHandler(BaseRequestHandler):
   """  Generates the start/home page.
-  
-
   """
+  def random_data(self):
+    return [random.randint(1, 100) for a in xrange(50)]
+
   def get(self, garbageinput=None):
     logging.info('Visiting the homepage')
+    # Create a chart object of 500x100 pixels
+    chart = SparkLineChart(500, 100)
+    chart.add_data(self.random_data())
+    chart.add_fill_simple('224499')
+
     self.generate('index.html', {
-      #'title': 'Getting Started',
+      'logourl': chart.get_url(),
     })
 
 class AboutPageHandler(BaseRequestHandler):
@@ -174,15 +184,6 @@ class AboutPageHandler(BaseRequestHandler):
       #'title': 'Getting Started',
     })
 
-class TestPageHandler(BaseRequestHandler):
-  """ Generates the test page.
-
-  """
-  def get(self):
-    logging.info('Visiting the test page')
-    self.generate('test.html', {
-      #'title': 'Getting Started',
-    })
 
 class FAQsPageHandler(BaseRequestHandler):
   """ Generates the FAQ page.
@@ -223,15 +224,65 @@ class DataInputHandler(BaseRequestHandler):
       'data': self.request.get('name'),
     })
 
+class TestPageHandler(BaseRequestHandler):
+  """ Generates the test page.
+
+  """
+  def get(self):
+    logging.info('Visiting the test page')
+    self.generate('test.html', {
+      #'title': 'Getting Started',
+    })
+
+class MyStatsPageHandler(BaseRequestHandler):
+  """ Generates the My Stats Page.
+  """
+  def get(self):
+    logging.info('Visiting the My Stats page.')
+
+    user = users.get_current_user()
+    if user:
+      print "BILL READ THIS NOW"
+    else:
+      	self.redirect(users.create_login_url(self.request.uri))
+
+    self.generate('mystats.html', {
+      #'title': 'Getting Started',
+    })
+
+class CommunityStatsPageHandler(BaseRequestHandler):
+  """ Generates the Community Stats Page.
+
+  """
+  def get(self):
+    logging.info('Visiting the Community Stats page.')
+    self.generate('communitystats.html', {
+      #'title': 'Getting Started',
+    })
+
+class GettingStartedPageHandler(BaseRequestHandler):
+  """ Generates the Getting Started Page.
+
+  """
+  def get(self):
+    logging.info('Visiting the Getting Started Page.')
+    self.generate('gettingstarted.html', {
+      #'title': 'Getting Started',
+    })
 
 # Map URLs to our RequestHandler classes above
 _CALLTRENDS_URLS = [
 # after each URL map we list the html template that is displayed
    ('/', HomePageHandler), #index.html
+   ('/index', HomePageHandler), #index.html
    ('/about', AboutPageHandler), #about.html
-   ('/faqs', FAQsPageHandler), #faqs.html
+#   ('/faqs', FAQsPageHandler), #faqs.html -Took this out -- not needed.
    ('/datain', DataInputHandler), #submitdata.html
-   ('/test', TestPageHandler), #submitdata.html
+   ('/test', TestPageHandler), #test.html
+   ('/mystats', MyStatsPageHandler), #mystats.html
+   ('/communitystats', CommunityStatsPageHandler), #communitystats.html
+   ('/gettingstarted', GettingStartedPageHandler), #gettingstarted.html
+   ('/.*$', HomePageHandler), #index.html
 ]
 
 def main():

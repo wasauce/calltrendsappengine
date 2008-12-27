@@ -8,9 +8,10 @@ Released for free under a Creative Commons Attribution 2.5 License
 body {
 	margin: 0;
 	padding: 0;
-	background: url(static/images/img01-green.jpg) repeat-x left top;
+	background: #454545 repeat-x left top;
+	/** background: url(static/images/img01-green.jpg) repeat-x left top; */
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	font-size: 13px;
+	font-size: 14px;
 	color: #333333;
 }
 
@@ -34,20 +35,20 @@ p, ul, ol {
 	margin: 0 0 2em 0;
 	text-align: justify;
 	line-height: 26px;
-	font-size: 11px;
+	font-size: 13px;
 }
 
 a:link {
-	color: #6DBD0B;
+	color: #0000FF;
 }
 
 a:hover, a:active {
 	text-decoration: none;
-	color: #6DBD0B;
+	color: #FF0000;
 }
 
 a:visited {
-	color: #6DBD0B;
+	color: #0000FF;
 }
 
 img {
@@ -153,7 +154,8 @@ input, textarea, select {
 	width: 860px;
 	height: 80px;
 	margin: 0 auto;
-	background: url(static/images/img02-green.jpg) no-repeat left top;
+	background: #454545;
+/**	background: url(static/images/img02-green.jpg) no-repeat left top; */
 }
 
 #logo h1, #logo h2 {
@@ -216,6 +218,7 @@ input, textarea, select {
 }
 
 .post .entry {
+	color: #FFFFFF;
 }
 
 .post .meta {
