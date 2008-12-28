@@ -365,14 +365,20 @@ class QRCodePageHandler(BaseRequestHandler):
       #'title': 'Getting Started',
     })
 
-
-class InitPageHandler(BaseRequestHandler):
+class InitPageHandler():
   """ Init page handler -- initializes the databases.
 
   """
   def get(self):
     logging.info('Visiting the init page for setup.')
     self.redirect("/index")
+    user = users.get_current_user()
+    if user.is_current_user_admin():
+      #INSERT CODE TO RUN HERE
+      print "Ran init code"
+    else:
+      self.redirect("/index")
+
 
 # Map URLs to our RequestHandler classes above
 _CALLTRENDS_URLS = [
