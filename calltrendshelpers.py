@@ -50,8 +50,8 @@ def processFormData(request):
     ind_metrics.total_duration += request.get('duration')
     ind_metrics.put()
   else:
-  	new_ind_metrics = IndividualMetrics()
-	new_ind_metrics.email = cgi.escape(self.request.get('email'))
+    new_ind_metrics = IndividualMetrics()
+    new_ind_metrics.email = cgi.escape(self.request.get('email'))
     if request.get('duration') < 10:
       new_ind_metrics.duration_10_seconds += 1
     elif request.get('duration') < 30:
@@ -78,8 +78,8 @@ def processFormData(request):
       new_ind_metrics.total_answered_type += 1
     new_ind_metrics.total_calls += 1
     new_ind_metrics.total_duration += request.get('duration')	
-	new_ind_metrics.put()
-	
+    new_ind_metrics.put()
+
     new_ind_entry = IndividualCallData()
     new_ind_entry.email = cgi.escape(self.request.get('email'))
     new_ind_entry.number = cgi.escape(self.request.get('phonenumber'))
@@ -92,7 +92,7 @@ def processFormData(request):
     new_ind_entry.missed_type = cgi.escape(self.request.get('missed_type'))
     new_ind_entry.answered_type = cgi.escape(self.request.get('answered_type'))
     new_ind_entry.number_type = cgi.escape(self.request.get('number_type'))
-	new_ind_metrics.put()
+    new_ind_metrics.put()
 
     version = 1
     g_data = db.GqlQuery("SELECT * FROM CollectiveCallData WHERE version = :1",

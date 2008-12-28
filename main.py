@@ -318,6 +318,25 @@ class GettingStartedPageHandler(BaseRequestHandler):
       #'title': 'Getting Started',
     })
 
+class QRCodePageHandler(BaseRequestHandler):
+  """ Generates the QR Code Page.
+
+  """
+  def get(self):
+    logging.info('Visiting the QR Code Page.')
+    self.generate('QRcode.html', {
+      #'title': 'Getting Started',
+    })
+
+
+class InitPageHandler(BaseRequestHandler):
+  """ Init page handler -- initializes the databases.
+
+  """
+  def get(self):
+    logging.info('Visiting the init page for setup.')
+    self.redirect("/index")
+
 # Map URLs to our RequestHandler classes above
 _CALLTRENDS_URLS = [
 # after each URL map we list the html template that is displayed
@@ -330,7 +349,9 @@ _CALLTRENDS_URLS = [
    ('/mystats', MyStatsPageHandler), #mystats.html
    ('/communitystats', CommunityStatsPageHandler), #communitystats.html
    ('/gettingstarted', GettingStartedPageHandler), #gettingstarted.html
-   ('/init', InitPageHandler),
+   ('/init', InitPageHandler), # This is a redirect.
+   ('/QRcode', QRCodePageHandler), #QRcode.html
+   #('/download', DownloadHandler), # This will allow the user to download the data.
    ('/.*$', HomePageHandler), #index.html
 ]
 
