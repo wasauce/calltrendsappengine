@@ -7,21 +7,32 @@
 	<div id="content">
 		<div class="post">
 			<div class="entry">
-				<p><img src="{{logourl}}" alt="Call Trends Logo" width="500" height="100" class="left" /></p><br /><br />
-                
-                <h2>CallTrends:</h2> See who you've been talking to on your Android powered phone.
-			</div>
-	
-			<div class="entry">
-				Because log files, data, pretty charts and random stats are fun
-                <ol> 
-                <li><a href="/mystats">Login to see your data</a></li>
-                <li><a href="/gettingstarted">Get started now by downloading the Android app</a></li>
-                <li><a href="/communitystats">See stats from all CallTrends users</a></li>
-                </ol>
-               
-			</div>
-		       <br />
+                <h2>Stats for: {{ nickname }}:</h2>
+				<p>The Charts:
+					INSERT CHARTS HERE
+					
+					<br>
+					The Numbers:
+				 <ul> 
+                  <li>Total Call Time: {{total_duration}}</li>
+                  <li>Total Calls: {{total_calls}}</li>
+                  <li>Total Answered Calls: {{total_answered_type}}</li>
+                  <li>Total Missed Calls: {{total_missed_type}}</li>
+                  <li>Total Incoming Calls: {{total_incoming_type}}</li>
+                  <li>Total Outgoing Calls: {{total_outgoing_type}}</li>
+                  <li>Calls less than 10 seconds: {{duration_10_seconds}}</li>
+                  <li>Calls less than 30 seconds: {{duration_30_seconds}}</li>
+                  <li>Calls less than 1 min: {{duration_1_min}}</li>
+                  <li>Calls less than 5 mins: {{duration_5_min}}</li>
+                  <li>Calls less than 10 mins: {{duration_10_min}}</li>
+                  <li>Calls less than 30 mins: {{duration_30_min}}</li>
+                  <li>Calls less than 1 hr: {{duration_1_hour}}</li>
+                  <li>Calls greater than 1 hr: {{duration_greater_than_1_hr}}</li>
+                 </ul>
+                </p>
+		
+			</div>			
+	<br />
     <br />
     <br />
     <br />
@@ -29,4 +40,4 @@
 		</div>
 	</div>
 	<!-- end content -->
-{% endblock content %} 
+{% endblock content %}

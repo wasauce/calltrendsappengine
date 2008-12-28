@@ -138,6 +138,11 @@ class CollectiveCallData(db.Model):
 #---Number of minutes per day, week, month, year   / incoming vs outgoing # some of this will need to be calculated nightly
 #---Number of calls per day, week, month, year / incoming vs outgoing # some of this will need to be calculated nightly. 
 
+class CollectiveCharts(db.Model):
+  """This is the AppEngine data model to store collective charts."""
+  pass
+
+
 
 class BaseRequestHandler(webapp.RequestHandler):
   """The common class for all CallTrends requests"""
@@ -294,6 +299,7 @@ class MyStatsPageHandler(BaseRequestHandler):
 
     self.generate('mystats.html', {
       'logouturl': users.create_logout_url('/index'),
+      'nickname': user.nickname(),
       #'':,
     })
 
