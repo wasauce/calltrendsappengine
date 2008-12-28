@@ -101,6 +101,8 @@ class IndividualMetrics(db.Model):
   total_answered_type = int
   total_calls = int
   total_duration = int
+  total_incoming_time = int
+  total_outgoing_time = int
 #---Top 10 incoming  #Could be found by querying + offline processing
 #---Top 10 missed    #Could be found by querying + offline processing
 #---Top 10 outgoing
@@ -300,7 +302,22 @@ class MyStatsPageHandler(BaseRequestHandler):
     self.generate('mystats.html', {
       'logouturl': users.create_logout_url('/index'),
       'nickname': user.nickname(),
-      #'':,
+#      'total_duration':,
+#      'total_calls':,
+#      'total_answered_type':,
+#      'total_missed_type':,
+#      'total_incoming_type':,
+#      'total_outgoing_type':,
+#      'total_incoming_time':,
+#      'total_outgoing_time':,
+#      'duration_10_seconds':,
+#      'duration_30_seconds':,
+#      'duration_1_min':,
+#      'duration_5_min':,
+#      'duration_10_min':,
+#      'duration_30_min':,
+#      'duration_1_hour':,
+#      'duration_greater_than_1_hr':,
     })
 
 class CommunityStatsPageHandler(BaseRequestHandler):
@@ -310,7 +327,22 @@ class CommunityStatsPageHandler(BaseRequestHandler):
   def get(self):
     logging.info('Visiting the Community Stats page.')
     self.generate('communitystats.html', {
-      #'': ,
+	#      'total_duration':,
+	#      'total_calls':,
+	#      'total_answered_type':,
+	#      'total_missed_type':,
+	#      'total_incoming_type':,
+	#      'total_outgoing_type':,
+	#      'total_incoming_time':,
+	#      'total_outgoing_time':,
+	#      'duration_10_seconds':,
+	#      'duration_30_seconds':,
+	#      'duration_1_min':,
+	#      'duration_5_min':,
+	#      'duration_10_min':,
+	#      'duration_30_min':,
+	#      'duration_1_hour':,
+	#      'duration_greater_than_1_hr':,
     })
 
 class GettingStartedPageHandler(BaseRequestHandler):
@@ -356,7 +388,7 @@ _CALLTRENDS_URLS = [
 #   ('/gettingstarted', GettingStartedPageHandler), #gettingstarted.html
    ('/init', InitPageHandler), # This is a redirect.
    ('/QRcode', QRCodePageHandler), #QRcode.html
-#   ('/download', DownloadHandler), # This will allow the user to download the data.
+#   ('/download', DownloadHandler), # This will allow the user to download the data. Host this on Google Code.
    ('/.*$', HomePageHandler), #index.html
 ]
 
