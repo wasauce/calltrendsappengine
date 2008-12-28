@@ -34,7 +34,7 @@ import random
 # http://pygooglechart.slowchop.com/
 import pygooglechart
 
-from calltrendshelpers import *
+import calltrendshelpers
 
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
@@ -239,7 +239,6 @@ class FAQsPageHandler(BaseRequestHandler):
       #'title': 'Getting Started',
     })	
 
-
 class DataInputHandler(BaseRequestHandler):
   """ Handler to process incoming CallTrends data.
 
@@ -348,10 +347,10 @@ _CALLTRENDS_URLS = [
    ('/test', TestPageHandler), #test.html
    ('/mystats', MyStatsPageHandler), #mystats.html
    ('/communitystats', CommunityStatsPageHandler), #communitystats.html
-   ('/gettingstarted', GettingStartedPageHandler), #gettingstarted.html
+#   ('/gettingstarted', GettingStartedPageHandler), #gettingstarted.html
    ('/init', InitPageHandler), # This is a redirect.
    ('/QRcode', QRCodePageHandler), #QRcode.html
-   #('/download', DownloadHandler), # This will allow the user to download the data.
+#   ('/download', DownloadHandler), # This will allow the user to download the data.
    ('/.*$', HomePageHandler), #index.html
 ]
 

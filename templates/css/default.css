@@ -39,7 +39,9 @@ p, ul, ol {
 }
 
 a:link {
-	color: #0000FF;
+	color: #7F5417;
+	font-size: 14px;
+	font-weight: normal;
 }
 
 a:hover, a:active {
@@ -48,7 +50,7 @@ a:hover, a:active {
 }
 
 a:visited {
-	color: #0000FF;
+	color: #7F5417;
 }
 
 img {

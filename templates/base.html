@@ -28,19 +28,21 @@ Description: A two-column, fixed-width and lightweight template ideal for 1024x7
 <div id="header">
 	<div id="menu">
 		<ul>
+			{% if logouturl %}
+			<li><a href="{{logouturl}}"><span class="numbertxt"></span>Logout</a></li>
+	        {% endif %}
 			<li><a href="/"><span class="numbertxt"></span>Home</a></li>
 			<li><a href="/about"><span class="numbertxt"></span>About</a></li>
 			<li><a href="/mystats"><span class="numbertxt"></span>My Stats</a></li>
 			<li><a href="/communitystats"><span class="numbertxt"></span>Community Stats</a></li>
-			{% if logouturl %}
-			<li><a href="{{logouturl }}"><span class="numbertxt"></span>Logout</a></li>
-	        {% endif %}
 		</ul>
 	</div>
 </div>
 
 <div id="logo">
-	<h1><a href="/index">CallTrends</a><img src="{{logourl}}" alt="Call Trends Logo" width="500" height="100" class="left" /></h1>	
+	<h1><a href="/index">CallTrends</a></h1>
+	<br>
+	<img src="{{logourl}}" alt="Call Trends Logo" width="500" height="100" class="left" />	
 </div>
 
 {% endblock %}
@@ -57,7 +59,7 @@ Description: A two-column, fixed-width and lightweight template ideal for 1024x7
 		<div class="post">
 			<h2 class="title">What is CallTrends?</h2>
 			<div class="entry">
-				<p><img src="static/images/img07.jpg" alt="" width="150" height="150" class="left" />CallTrends: See who you've been talking to on your Android powered phone. <a href="/gettingstarted">Click here to get started.</a></p>
+				<p><img src="static/images/img07.jpg" alt="" width="150" height="150" class="left" />CallTrends: See who you've been talking to on your Android powered phone. <a href="/about">Click here to get started.</a></p>
                <br />
 		    </div>
 	    </div>   
@@ -78,7 +80,7 @@ Description: A two-column, fixed-width and lightweight template ideal for 1024x7
 			<ul>
             	<li><a href="/about">About</a></li>
 				<li><a href="/mystats">My Stats</a></li>
-                <li><a href="/gettingstarted">Getting Started</a></li>
+                <li><a href="/about">Getting Started</a></li>
 				<li><a href="/communitystats">Community Stats</a></li>
 			</ul>
 			</li>
