@@ -71,13 +71,13 @@ class IndividualCallData(db.Model):
   number = db.PhoneNumberProperty()  #db.db.PhoneNumberProperty(required=True)
   numberlabel = db.StringProperty()
   numbertype = db.StringProperty()
-  date = int
-  duration = int
-  incoming_type = int
-  outgoing_type = int
-  missed_type = int
-  answered_type = int
-  number_type = db.StringProperty()
+  date = db.IntegerProperty() #Should change this potentially....
+  duration = db.IntegerProperty()
+  incoming_type = db.IntegerProperty()
+  outgoing_type = db.IntegerProperty()
+  missed_type = db.IntegerProperty()
+  answered_type = db.IntegerProperty()
+  creation_time = db.DateTimeProperty(auto_now_add=True)
 
 class IndividualMetrics(db.Model):
   """
@@ -87,22 +87,22 @@ class IndividualMetrics(db.Model):
   growth.
   """
   email = db.EmailProperty()
-  duration_10_seconds = int # indicates call was less than 10 seconds
-  duration_30_seconds = int # indicates call was >9.999999 seconds but less than 30
-  duration_1_min = int # call was greater than 30 but less than 1 min
-  duration_5_min = int # call was greater than 1 min but less than 5 mins
-  duration_10_min = int # call was greater than 5 mins but less than 10 mins
-  duration_30_min = int # call was greater than 10 mins but less than 30 mins
-  duration_1_hour = int # call was greater than 30 mins but less than 1 hr
-  duration_greater_than_1_hr = int # call was greater than 1 hr
-  total_incoming_type = int
-  total_outgoing_type = int
-  total_missed_type = int
-  total_answered_type = int
-  total_calls = int
-  total_duration = int
-  total_incoming_time = int
-  total_outgoing_time = int
+  duration_10_seconds = db.IntegerProperty() # indicates call was less than 10 seconds
+  duration_30_seconds = db.IntegerProperty() # indicates call was >9.999999 seconds but less than 30
+  duration_1_min = db.IntegerProperty() # call was greater than 30 but less than 1 min
+  duration_5_min = db.IntegerProperty() # call was greater than 1 min but less than 5 mins
+  duration_10_min = db.IntegerProperty() # call was greater than 5 mins but less than 10 mins
+  duration_30_min = db.IntegerProperty() # call was greater than 10 mins but less than 30 mins
+  duration_1_hour = db.IntegerProperty() # call was greater than 30 mins but less than 1 hr
+  duration_greater_than_1_hr = db.IntegerProperty() # call was greater than 1 hr
+  total_incoming_type = db.IntegerProperty()
+  total_outgoing_type = db.IntegerProperty()
+  total_missed_type = db.IntegerProperty()
+  total_answered_type = db.IntegerProperty()
+  total_calls = db.IntegerProperty()
+  total_duration = db.IntegerProperty()
+  total_incoming_time = db.IntegerProperty()
+  total_outgoing_time = db.IntegerProperty()
 #---Top 10 incoming  #Could be found by querying + offline processing
 #---Top 10 missed    #Could be found by querying + offline processing
 #---Top 10 outgoing
@@ -119,31 +119,30 @@ class CollectiveCallData(db.Model):
   growth
   """
 
-  version = int
-  duration_10_seconds = int # indicates call was less than 10 seconds
-  duration_30_seconds = int # indicates call was >9.999999 seconds but less than 30
-  duration_1_min = int # call was greater than 30 but less than 1 min
-  duration_5_min = int # call was greater than 1 min but less than 5 mins
-  duration_10_min = int # call was greater than 5 mins but less than 10 mins
-  duration_30_min = int # call was greater than 10 mins but less than 30 mins
-  duration_1_hour = int # call was greater than 30 mins but less than 1 hr
-  duration_greater_than_1_hr = int # call was greater than 1 hr
-  total_incoming_type = int
-  total_outgoing_type = int
-  total_missed_type = int
-  total_answered_type = int
-  total_calls = int
-  total_duration = int
-  total_new = int # TODO: What is this?
-  total_incoming_time = int
-  total_outgoing_time = int
+  version = db.IntegerProperty()
+  duration_10_seconds = db.IntegerProperty() # indicates call was less than 10 seconds
+  duration_30_seconds = db.IntegerProperty() # indicates call was >9.999999 seconds but less than 30
+  duration_1_min = db.IntegerProperty() # call was greater than 30 but less than 1 min
+  duration_5_min = db.IntegerProperty() # call was greater than 1 min but less than 5 mins
+  duration_10_min = db.IntegerProperty() # call was greater than 5 mins but less than 10 mins
+  duration_30_min = db.IntegerProperty() # call was greater than 10 mins but less than 30 mins
+  duration_1_hour = db.IntegerProperty() # call was greater than 30 mins but less than 1 hr
+  duration_greater_than_1_hr = db.IntegerProperty() # call was greater than 1 hr
+  total_incoming_type = db.IntegerProperty()
+  total_outgoing_type = db.IntegerProperty()
+  total_missed_type = db.IntegerProperty()
+  total_answered_type = db.IntegerProperty()
+  total_calls = db.IntegerProperty()
+  total_duration = db.IntegerProperty()
+  total_new = db.IntegerProperty() # TODO: What is this?
+  total_incoming_time = db.IntegerProperty()
+  total_outgoing_time = db.IntegerProperty()
 #---Number of minutes per day, week, month, year   / incoming vs outgoing # some of this will need to be calculated nightly
 #---Number of calls per day, week, month, year / incoming vs outgoing # some of this will need to be calculated nightly. 
 
 class CollectiveCharts(db.Model):
   """This is the AppEngine data model to store collective charts."""
   pass
-
 
 
 class BaseRequestHandler(webapp.RequestHandler):
@@ -244,7 +243,221 @@ class FAQsPageHandler(BaseRequestHandler):
     logging.info('Visiting the FAQs page')
     self.generate('faqs.html', {
       #'title': 'Getting Started',
-    })	
+    })
+
+
+def processFormData(request):
+  """Inputs data in the db from the Andorid App.
+
+  Args:
+    request: The post request containing a single call's data.
+  Returns:
+    Nothing
+  """
+  current_email = cgi.escape(request.get('email'))
+  #Now query the DB to see if we have an existing record.
+  ind_metrics_gql = db.GqlQuery("SELECT * FROM IndividualMetrics WHERE email = :1",
+                                current_email)
+  if ind_metrics_gql.count() > 0:
+    ind_metrics = ind_metrics_gql[0]
+  else:
+    ind_metrics = None
+  if ind_metrics:
+    logging.info('ind_metrics: %s' % dir(ind_metrics))
+    if request.get('duration') < 10:
+      if ind_metrics.duration_10_seconds:
+        ind_metrics.duration_10_seconds += 1
+      else:
+        ind_metrics.duration_10_seconds = 1
+    if request.get('duration') < 30:
+      if ind_metrics.duration_30_seconds:
+        ind_metrics.duration_30_seconds += 1
+      else:
+        ind_metrics.duration_30_seconds = 1
+    if request.get('duration') < 60:
+      if ind_metrics.duration_1_min:
+        ind_metrics.duration_1_min += 1
+      else:
+        ind_metrics.duration_1_min = 1
+    if request.get('duration') < (60*5):
+      if ind_metrics.duration_5_min:
+        ind_metrics.duration_5_min += 1
+      else:
+        ind_metrics.duration_5_min = 1
+    if request.get('duration') < (60*10):
+      if ind_metrics.duration_10_min:
+        ind_metrics.duration_10_min += 1
+      else:
+        ind_metrics.duration_10_min = 1
+    if request.get('duration') < (60*30):
+      if ind_metrics.duration_30_min:
+        ind_metrics.duration_30_min += 1
+      else:
+        ind_metrics.duration_30_min = 1
+    if request.get('duration') < (60*60):
+      if ind_metrics.duration_1_hour:
+       ind_metrics.duration_1_hour += 1
+      else:
+        ind_metrics.duration_1_hour = 1
+    if request.get('duration') >= (60*60):
+      if ind_metrics.duration_greater_than_1_hr:
+        ind_metrics.duration_greater_than_1_hr += 1
+      else:
+        ind_metrics.duration_greater_than_1_hr = 1
+    if request.get('incoming') == 1:
+      if ind_metrics.total_incoming_type:
+        ind_metrics.total_incoming_type += 1
+      else:
+        ind_metrics.total_incoming_type = 1
+    if request.get('outgoing') == 1:
+      if ind_metrics.total_outgoing_type:
+        ind_metrics.total_outgoing_type += 1
+      else:
+        ind_metrics.total_outgoing_type = 1
+    if request.get('missed') == 1:
+      if ind_metrics.total_missed_type:
+        ind_metrics.total_missed_type += 1
+      else:
+        ind_metrics.total_missed_type = 1
+    if request.get('missed') == 0:
+      if ind_metrics.total_answered_type:
+        ind_metrics.total_answered_type += 1
+      else:
+        ind_metrics.total_answered_type = 1      
+    if ind_metrics.total_calls:
+      ind_metrics.total_calls += 1
+    else:
+      ind_metrics.total_calls = 1
+    if ind_metrics.total_duration:
+      ind_metrics.total_duration += int(request.get('duration'))
+    else:
+      ind_metrics.total_duration = int(request.get('duration'))
+    ind_metrics.put()
+  else:
+    new_ind_metrics = IndividualMetrics()
+    new_ind_metrics.email = cgi.escape(request.get('email'))
+    if request.get('duration') < 10:
+      new_ind_metrics.duration_10_seconds = 1
+    elif request.get('duration') < 30:
+      new_ind_metrics.duration_30_seconds = 1
+    elif request.get('duration') < 60:
+      new_ind_metrics.duration_1_min = 1
+    elif request.get('duration') < (60*5):
+      new_ind_metrics.duration_5_min = 1
+    elif request.get('duration') < (60*10):
+      new_ind_metrics.duration_10_min = 1
+    elif request.get('duration') < (60*30):
+      new_ind_metrics.duration_30_min = 1
+    elif request.get('duration') < (60*60):
+      new_ind_metrics.duration_1_hour = 1
+    elif request.get('duration') >= (60*60):
+      new_ind_metrics.duration_greater_than_1_hr = 1
+    if request.get('incoming') == 1:
+      new_ind_metrics.total_incoming_type = 1
+    if request.get('outgoing') == 1:
+      new_ind_metrics.total_outgoing_type = 1
+    if request.get('missed') == 1:
+      new_ind_metrics.total_missed_type = 1
+    if request.get('missed') == 0:
+      new_ind_metrics.total_answered_type = 1
+    new_ind_metrics.total_calls = 1
+    new_ind_metrics.total_duration = request.get('duration')	
+    new_ind_metrics.put()
+
+  new_ind_entry = IndividualCallData()
+  new_ind_entry.email = db.Email(cgi.escape(request.get('email')))
+  new_ind_entry.number = db.PhoneNumber(cgi.escape(request.get('phonenumber')))
+  new_ind_entry.numberlabel = cgi.escape(request.get('numberlabel'))
+  new_ind_entry.numbertype = cgi.escape(request.get('numbertype'))
+  new_ind_entry.date = int(cgi.escape(request.get('date')))
+  new_ind_entry.duration = int(cgi.escape(request.get('duration')))
+  new_ind_entry.incoming_type = int(cgi.escape(request.get('incoming_type')))
+  new_ind_entry.outgoing_type = int(cgi.escape(request.get('outgoing_type')))
+  new_ind_entry.missed_type = int(cgi.escape(request.get('missed_type')))
+  new_ind_entry.answered_type = int(cgi.escape(request.get('answered_type')))
+  new_ind_entry.put()
+
+  version = 1
+  g_data_gql = db.GqlQuery("SELECT * FROM CollectiveCallData WHERE version = :1",
+                       version)
+  if g_data_gql.count() > 0:
+    g_data = ind_metrics_gql[0]
+  else:
+    g_data = CollectiveCallData()
+  if request.get('duration') < 10:
+    if g_data.duration_10_seconds:
+      g_data.duration_10_seconds += 1
+    else:
+      g_data.duration_10_seconds = 1
+  elif request.get('duration') < 30:
+    if g_data.duration_30_seconds:
+      g_data.duration_30_seconds += 1
+    else:
+      g_data.duration_30_seconds = 1
+  elif request.get('duration') < 60:
+    if g_data.duration_1_min:
+      g_data.duration_1_min += 1
+    else:
+      g_data.duration_1_min = 1
+  elif request.get('duration') < (60*5):
+    if g_data.duration_5_min:
+      g_data.duration_5_min += 1
+    else:
+      g_data.duration_5_min = 1
+  elif request.get('duration') < (60*10):
+    if g_data.duration_10_min:
+      g_data.duration_10_min += 1
+    else:
+      g_data.duration_10_min = 1
+  elif request.get('duration') < (60*30):
+    if g_data.duration_30_min:
+      g_data.duration_30_min += 1
+    else:
+      g_data.duration_30_min = 1
+  elif request.get('duration') < (60*60):
+    if g_data.duration_1_hour:
+      g_data.duration_1_hour += 1
+    else:
+      g_data.duration_1_hour = 1
+  elif request.get('duration') >= (60*60):
+    if g_data.duration_greater_than_1_hr:
+      g_data.duration_greater_than_1_hr += 1
+    else:
+      g_data.duration_greater_than_1_hr = 1
+  if request.get('incoming') == 1:
+    if g_data.total_incoming_type:
+      g_data.total_incoming_type += 1
+      g_data.total_incoming_time += int(request.get('duration'))
+    else:
+      g_data.total_incoming_type = 1
+      g_data.total_incoming_time = int(request.get('duration'))      
+  if request.get('outgoing') == 1:
+    if g_data.total_outgoing_type:
+      g_data.total_outgoing_type += 1
+      g_data.total_outgoing_time += int(request.get('duration'))
+    else:
+      g_data.total_outgoing_type = 1
+      g_data.total_outgoing_time = int(request.get('duration'))      
+  if request.get('missed') == 1:
+    if g_data.total_missed_type:
+      g_data.total_missed_type += 1
+    else:
+      g_data.total_missed_type = 1
+  if request.get('missed') == 0:
+    if g_data.total_answered_type:
+      g_data.total_answered_type += 1
+    else:
+      g_data.total_answered_type = 1
+  if g_data.total_calls:
+    g_data.total_calls += 1
+  else:
+    g_data.total_calls = 1
+  if g_data.total_duration:
+    g_data.total_duration += int(request.get('duration'))
+  else:
+    g_data.total_duration = int(request.get('duration'))
+  g_data.put()
+
 
 class DataInputHandler(BaseRequestHandler):
   """ Handler to process incoming CallTrends data.
@@ -252,6 +465,7 @@ class DataInputHandler(BaseRequestHandler):
   GET calls redirected
   POST calls will be processed and the data added to the database.
   """
+
   def get(self):
     """ Function for GET requests that redirects to the main page.
     The DataInputHandler should only be called via POST.
@@ -259,22 +473,14 @@ class DataInputHandler(BaseRequestHandler):
     logging.info('Attempting to access DataInputHandler via GET')
     self.redirect("/index")
 
-
   def post(self):
     """ Post method to accept CallTrends data.
-    
     """
+    
     logging.info('Accessing DataInputHandler via POST')
-    try:
-      #calltrendshelpers.processFormData(self.request):
-      self.response.out.write("SUCCESS")
-    except:
-      self.error(500)
-      mail_admin = 'wferrell@gmail.com' # Pull this code out when posting.
-      subject = 'CallTrends - DataInputHander Error'
-      mail.send_mail_to_admins(sender=mail_admin,
-                                 subject=subject,
-                                 body=self.request)
+    logging.info('Request: %s' % self.request)
+    processFormData(self.request)
+    self.response.out.write("OK")
 
 class TestPageHandler(BaseRequestHandler):
   """ Generates the test page.
@@ -387,7 +593,7 @@ _CALLTRENDS_URLS = [
    ('/index', HomePageHandler), #index.html
    ('/about', AboutPageHandler), #about.html
 #   ('/faqs', FAQsPageHandler), #faqs.html -Took this out -- not needed.
-   ('/datain', DataInputHandler), #submitdata.html
+   ('/datain', DataInputHandler),
    ('/test', TestPageHandler), #test.html
    ('/mystats', MyStatsPageHandler), #mystats.html
    ('/communitystats', CommunityStatsPageHandler), #communitystats.html
@@ -395,7 +601,7 @@ _CALLTRENDS_URLS = [
    ('/init', InitPageHandler), # This is a redirect.
    ('/QRcode', QRCodePageHandler), #QRcode.html
 #   ('/download', DownloadHandler), # This will allow the user to download the data. Host this on Google Code.
-   ('/.*$', HomePageHandler), #index.html
+   ('/.*$', HomePageHandler), #index.html  #REPLACE -- with code from other apps
 ]
 
 def main():
