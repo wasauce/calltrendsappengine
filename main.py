@@ -190,9 +190,11 @@ class BaseRequestHandler(webapp.RequestHandler):
 
     # Populate the values common to all templates
     values = {
-      #'user': users.GetCurrentUser(),
       'debug': self.request.get('deb'),
       'logourl': logo_chart.get_url(),
+      'user': users.GetCurrentUser(),
+      'login_url': users.CreateLoginURL(self.request.uri),
+      'logout_url': users.CreateLogoutURL(self.request.uri),
     }
     values.update(template_values)
     directory = os.path.dirname(os.environ['PATH_TRANSLATED'])
@@ -498,30 +500,14 @@ class MyStatsPageHandler(BaseRequestHandler):
 
     user = users.get_current_user()
     if user:
-      #print "BILL READ THIS NOW" #QUERY HERE TO GET THE DATA TO OUTPUT AND GRAPH GRAPH GRAPH
-      pass
+      individual_metrics = IndividualMetrics.all()
+      individual_metrics.filter("email =", user.email())
     else:
       	self.redirect(users.create_login_url(self.request.uri))
 
     self.generate('mystats.html', {
-      'logouturl': users.create_logout_url('/index'),
       'nickname': user.nickname(),
-#      'total_duration':,
-#      'total_calls':,
-#      'total_answered_type':,
-#      'total_missed_type':,
-#      'total_incoming_type':,
-#      'total_outgoing_type':,
-#      'total_incoming_time':,
-#      'total_outgoing_time':,
-#      'duration_10_seconds':,
-#      'duration_30_seconds':,
-#      'duration_1_min':,
-#      'duration_5_min':,
-#      'duration_10_min':,
-#      'duration_30_min':,
-#      'duration_1_hour':,
-#      'duration_greater_than_1_hr':,
+      'individual_metrics': individual_metrics,
     })
 
 class CommunityStatsPageHandler(BaseRequestHandler):
@@ -530,23 +516,9 @@ class CommunityStatsPageHandler(BaseRequestHandler):
   """
   def get(self):
     logging.info('Visiting the Community Stats page.')
+    group_metrics = CollectiveCallData.all()
     self.generate('communitystats.html', {
-	#      'total_duration':,
-	#      'total_calls':,
-	#      'total_answered_type':,
-	#      'total_missed_type':,
-	#      'total_incoming_type':,
-	#      'total_outgoing_type':,
-	#      'total_incoming_time':,
-	#      'total_outgoing_time':,
-	#      'duration_10_seconds':,
-	#      'duration_30_seconds':,
-	#      'duration_1_min':,
-	#      'duration_5_min':,
-	#      'duration_10_min':,
-	#      'duration_30_min':,
-	#      'duration_1_hour':,
-	#      'duration_greater_than_1_hr':,
+      'group_metrics': group_metrics,
     })
 
 class GettingStartedPageHandler(BaseRequestHandler):
@@ -599,7 +571,7 @@ _CALLTRENDS_URLS = [
    ('/init', InitPageHandler), # This is a redirect.
    ('/QRcode', QRCodePageHandler), #QRcode.html
 #   ('/download', DownloadHandler), # This will allow the user to download the data. Host this on Google Code.
-   ('/.*$', HomePageHandler), #index.html  #REPLACE -- with code from other apps
+    ('/.*$', HomePageHandler), #index.html
 ]
 
 def main():
