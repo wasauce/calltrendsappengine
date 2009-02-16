@@ -34,8 +34,6 @@ import random
 # http://pygooglechart.slowchop.com/
 import pygooglechart
 
-import calltrendshelpers
-
 from google.appengine.api import datastore
 from google.appengine.api import datastore_types
 from google.appengine.api import datastore_errors
